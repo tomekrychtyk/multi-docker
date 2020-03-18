@@ -1,0 +1,24 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t tomekrychtyk/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true tomekrychtyk/react-test npm test
+
+after_success:
+  - docker build -t tomekrychtyk/multi-client ./client
+  - docker build -t tomekrychtyk/multi-nginx ./nginx
+  - docker build -t tomekrychtyk/multi-server ./server
+  - docker build -t tomekrychtyk/multi-worker ./worker
+
+  # Login to Docker Hub
+  - echo "$DOCKER_PASSWORD" | docker_login -u "$DOCKER_ID" --password-stdin
+
+  # Take those images and pushed them to Docker Hub
+  - docker push tomekrychtyk/multi-client
+  - docker push tomekrychtyk/multi-nginx
+  - docker push tomekrychtyk/multi-server
+  - docker push tomekrychtyk/multi-worker
