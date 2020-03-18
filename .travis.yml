@@ -15,7 +15,7 @@ after_success:
   - docker build -t tomekrychtyk/multi-worker ./worker
 
   # Login to Docker Hub
-  - echo "$DOCKER_PASSWORD" | docker_login -u "$DOCKER_ID" --password-stdin
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
 
   # Take those images and pushed them to Docker Hub
   - docker push tomekrychtyk/multi-client
